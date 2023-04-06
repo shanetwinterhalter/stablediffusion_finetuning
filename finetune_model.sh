@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MODEL_NAME="stabilityai/stable-diffusion-2-1"
-FINETUNE_MODEL_NAME="shane7"
+FINETUNE_MODEL_NAME="shane8"
 #MODEL_NAME = "CompVis/stable-diffusion-v1-4"
 TOKEN_NAME="shane"
 INSTANCE_DIR="./models/$TOKEN_NAME/data/$TOKEN_NAME"
@@ -17,10 +17,11 @@ TRAIN_BATCH_SIZE=1
 SAMPLE_BATCH_SIZE=1
 GRAD_ACCUMULATION_STEPS=1
 LEARNING_RATE=5e-6
-LR_SCHEDULER="constant"
-LR_WARMUP_STEPS=0
+LR_SCHEDULER="cosine_with_restarts"
+LR_WARMUP_STEPS=500
+LR_NUM_CYCLES=5
 NUM_CLASS_IMAGES=200
-MAX_TRAIN_STEPS=1200 #200
+MAX_TRAIN_STEPS=1800 #200
 # Checkpointing seems to cause failure so set to never trigger
 CHECKPOINTING_STEPS=9999
 
@@ -43,6 +44,7 @@ accelerate launch train_dreambooth.py \
     --learning_rate=$LEARNING_RATE \
     --lr_scheduler=$LR_SCHEDULER \
     --lr_warmup_steps=$LR_WARMUP_STEPS \
+    --lr_num_cycles=$LR_NUM_CYCLES \
     --num_class_images=$NUM_CLASS_IMAGES \
     --max_train_steps=$MAX_TRAIN_STEPS \
     --sample_batch_size=$SAMPLE_BATCH_SIZE \

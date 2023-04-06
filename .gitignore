@@ -2,3 +2,5 @@ models
 venv
 train_dreambooth.py
 __pycache__
+notes.md
+saved_images
