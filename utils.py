@@ -46,7 +46,7 @@ def image_grid(imgs, rows=2, cols=2):
 
 def gen_images(no_imgs, prompt, n_prompt="", num_inference_steps=15,
                guidance_scale=20, seed=None, weights_folder_name=None,
-               model_id=None, text_encoder=None, unet=None):
+               model_id=None, text_encoder=None, unet=None, device="cuda"):
     weights_root_folder = "./models/shane/stable_diffusion_weights"
     if weights_folder_name is not None:
         finetuned_model = weights_root_folder + "/" + weights_folder_name
@@ -60,9 +60,9 @@ def gen_images(no_imgs, prompt, n_prompt="", num_inference_steps=15,
             torch_dtype=torch.float16)
         pipe = DiffusionPipeline.from_pretrained(
             model_id, unet=unet, text_encoder=text_encoder,
-            torch_dtype=torch.float16).to("cuda")
+            torch_dtype=torch.float16).to(device)
 
-    generator = torch.Generator("cuda")
+    generator = torch.Generator(device)
     if seed is not None:
         generator.manual_seed(seed)
     image = [0] * no_imgs
@@ -73,10 +73,12 @@ def gen_images(no_imgs, prompt, n_prompt="", num_inference_steps=15,
     return image
 
 
+# Only cuda supported for upscaling images
 def upscale_images(images, prompt, n_prompt="", num_inference_steps=15,
-                   model_id="stabilityai/stable-diffusion-x4-upscaler"):
+                   model_id="stabilityai/stable-diffusion-x4-upscaler",
+                   device="cuda"):
     pipe = StableDiffusionUpscalePipeline.from_pretrained(
-        model_id, torch_dtype=torch.float16).to("cuda")
+        model_id, torch_dtype=torch.float16).to(device)
     pipe.enable_xformers_memory_efficient_attention()
 
     return [
