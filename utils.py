@@ -35,7 +35,9 @@ def download_image(url):
     return Image.open(BytesIO(response.content)).convert("RGB")
 
 
-def image_grid(imgs, rows=2, cols=2):
+def image_grid(imgs):
+    cols = min(5, len(imgs))
+    rows = len(imgs) // cols + 1 if len(imgs) % cols else len(imgs) // cols
     w, h = imgs[0].size
     grid = Image.new('RGB', size=(cols * w, rows * h))
 
@@ -62,9 +64,9 @@ def gen_images(no_imgs, prompt, n_prompt="", num_inference_steps=15,
             model_id, unet=unet, text_encoder=text_encoder,
             torch_dtype=torch.float16).to(device)
 
-    generator = torch.Generator(device)
+    generator = None
     if seed is not None:
-        generator.manual_seed(seed)
+        generator = torch.Generator(device).manual_seed(seed)
     image = [0] * no_imgs
     for i in range(no_imgs):
         image[i] = pipe(prompt, negative_prompt=n_prompt, generator=generator,
