@@ -1,3 +1,3 @@
 # stablediffusion_finetuning
 
-A repo to test finetuning Stable Diffusion using Dream Studio
+A repo to test finetuning Stable Diffusion using Dreambooth
